@@ -1,29 +1,26 @@
-1. Our dataset is named adult data. It contains an extract of the data from the census of adults in the US. 
-It has 32561 entries. After removal of unknown values, we awere left with 30726 entries.
+Machine Learning Assignment by Muhammad Variawa(755427), Harvey Muyangayanga(941446) and Seale Rapolai()
+ Dataset Description
+Our dataset is named adult data. It contains an extract of the data from the census of adults in the US.
+It has 32561 entries. After removal of unknown values, we are left with 30726 entries.
 There are 14 attributes and 1 target. The goal is to predict if the target(the income) is higher or lower
-than 50k dollars. 
+than 50k dollars.
 The 14 attributes are:
 - age: continuous.
 - workclass: Private, Self-emp-not-inc, Self-emp-inc, Federal-gov, Local-gov, State-gov, Without-pay, Never-worked.
-- fnlwgt:final weight, continuous.
-- education: Bachelors, Some-college, 11th, HS-grad, Prof-school, Assoc-acdm, Assoc-voc, 9th, 7th-8th, 12th, Masters,
- 1st-4th, 10th, Doctorate, 5th-6th, Preschool.
+- fnlwgt: final weight, continuous.
+- education: Bachelors, Some-college, 11th, HS-grad, Prof-school, Assoc-acdm, Assoc-voc, 9th, 7th-8th, 12th, Masters, 1st-4th, 10th, Doctorate, 5th-6th, Preschool.
 - education-num: continuous.
-- marital-status: Married-civ-spouse, Divorced, Never-married, Separated, Widowed, Married-spouse-absent, Married-AF-spouse.
-- occupation: Tech-support, Craft-repair, Other-service, Sales, Exec-managerial, Prof-specialty, Handlers-cleaners, 
-Machine-op-inspct, Adm-clerical, Farming-fishing, Transport-moving, Priv-house-serv, Protective-serv, Armed-Forces.
+-marital-status: Married-civ-spouse, Divorced, Never-married, Separated, Widowed, Married-spouse-absent, Married-AF-spouse.
+- occupation: Tech-support, Craft-repair, Other-service, Sales, Exec-managerial, Prof-specialty, Handlers-cleaners, Machine-op-inspct, Adm-clerical, Farming-fishing, Transport-moving, Priv-house-serv, Protective-serv, Armed-Forces.
 - relationship: Wife, Own-child, Husband, Not-in-family, Other-relative, Unmarried.
 - race: White, Asian-Pac-Islander, Amer-Indian-Eskimo, Other, Black.
 - sex: Female, Male.
 - capital-gain: continuous.
 - capital-loss: continuous.
 - hours-per-week: continuous.
-- native-country: United-States, Cambodia, England, Puerto-Rico, Canada, Germany, Outlying-US(Guam-USVI-etc), India,
-Japan, Greece, South, China, Cuba, Iran, Honduras, Philippines, Italy, Poland, Jamaica, Vietnam, Mexico, Portugal, 
-Ireland, France, Dominican-Republic, Laos, Ecuador, Taiwan, Haiti, Columbia, Hungary, Guatemala, Nicaragua, Scotland, 
-Thailand, Yugoslavia, El-Salvador, Trinadad&Tobago, Peru, Hong, Holand-Netherlands. 
+- native-country: United-States, Cambodia, England, Puerto-Rico, Canada, Germany, Outlying-US(Guam-USVI-etc), India, Japan, Greece, South, China, Cuba, Iran, Honduras, Philippines, Italy, Poland, Jamaica, Vietnam, Mexico, Portugal, Ireland, France, Dominican-Republic, Laos, Ecuador, Taiwan, Haiti, Columbia, Hungary, Guatemala, Nicaragua, Scotland, Thailand, Yugoslavia, El-Salvador, Trinidad & Tobago, Peru, Hong, Holand-Netherlands.
 
-Below we can see a small sample of how the dataset is structured: 
+Below we can see a small sample of how the dataset is structured:
 39, State-gov, 77516, Bachelors, 13, Never-married, Adm-clerical, Not-in-family, White, Male, 2174, 0, 40, United-States, <=50K
 50, Self-emp-not-inc, 83311, Bachelors, 13, Married-civ-spouse, Exec-managerial, Husband, White, Male, 0, 0, 13, United-States, <=50K
 38, Private, 215646, HS-grad, 9, Divorced, Handlers-cleaners, Not-in-family, White, Male, 0, 0, 40, United-States, <=50K
@@ -37,27 +34,31 @@ Below we can see a small sample of how the dataset is structured:
 37, Private, 280464, Some-college, 10, Married-civ-spouse, Exec-managerial, Husband, Black, Male, 0, 0, 80, United-States, >50K
 30, State-gov, 141297, Bachelors, 13, Married-civ-spouse, Prof-specialty, Husband, Asian-Pac-Islander, Male, 0, 0, 40, India, >50K
 
-
-2. We first removed the data with unknown values since they might have been useful if it was a binary decision such as presence of 
-data implies a decision and abscence implies another one. There is however to much uncertainty about the unknowns for them to be
-used benefically.
-An extra preprocessing step was needed as the attributes were both continuous and discrete. To train our models three possibilities were offered to us. 
-a) ignore the continuous attributes since most of them are discrete anyway(10:5 discrete to continuous). This would however reduced the precision of 
+2. Structuring
+We first removed the data with unknown values since they might have been useful if it was a binary decision such as presence of data implies a decision and absence implies another one. There is however to much uncertainty about the unknowns for them to be
+used beneficially.
+An extra preprocessing step was needed for the decision trees and neural network respectively. 
+For the decision tree, the attributes were both continuous and discrete. To train our models three possibilities were offered to us.
+a) ignore the continuous attributes since most of them are discrete anyway(10:5 discrete to continuous). This would however reduced the precision of
 the algorithm
 b) convert the continuous into discrete using ranges.
 c) convert the discrete into continuous using pandas. This is the one we opted for.
 The dataset was also missing a first row to identify each attributes.
 
+For the Neural Network, continuous data was required, so we had to do the opposite of what was done in the for the decision trees. All the discrete values had to be converted into some continuous value so that the weight adjustments would be effective.
+
 Finally splitting the data we used a ratio of 60:20:20
 
-3. We decided to use Neural networks, Decision tree and a Random forest.
+3. Classification Algorithms
+We decided to use Neural networks, Decision tree and a Random forest.
 
-Decision tree vs Random forest: The main problem with decision tree is that they tend to overfit the data and as such the solution becomes pruning. 
+Decision tree vs Random forest: The main problem with decision tree is that they tend to overfit the data and as such the solution becomes pruning.
 Random forest however does not have this issue but because it is a bunch of decision trees running together the training time increases exponentially
-and the resources needed(espacially when using recursion) can become a nightmare as our dataset grows.
+and the resources needed(especially when using recursion) can become a nightmare as our dataset grows.
 
-Neural networks are  more precise and give less error than the two previous model but its blackbox type of model makes it hard to retrace decisions
-and why they were made
+Neural networks are  more precise and give less error than the two previous model but its blackbox type of model makes it hard to retrace decisions and why they were made. The neural network works by creating a network of neurons or notes in different layers with weights assign to connections between any two neurons. Each note process it’s input passes the out to the next neuron. This is done until the final layer of neurons which will produce some output which we can use as our classification.
+
+To improve a neural networks performance we adjust the weights between the neurons
 
 RESULTS
 
@@ -74,17 +75,20 @@ For the random forest, depending on the number of trees we had: - 500 entries wi
                                                                 - 1500 entries with 1 tree:77.592%
                                                                 - 1500 entries with 5 trees:81.873%
                                                                 - 1500 entries with 10 trees: 81.16%
-We have to note that every tree of the forest has 8 features picked at random and their depth was limited to 10 
+We have to note that every tree of the forest has 8 features picked at random and their depth was limited to 10
 
 For the Neural network: - 500 entries gives us a 76.2% precision
                         - 1000 entries gives us a 75.6% precision
                         - 1500 entries gives us a  74.73% precision
 
-4. RESULTS DISCUSSION
-Contrary to what was expected, neural networks performed the least, followed by the decision tree and the best results came from the random forests with 10 trees. 
-As we increse the number of trees in the forest,  our prediction become more accurate. The poor results of the neural networks can be attributed to the high prevalence 
-of less than 50k incomes even in the cleaned data i.e. dataset without unknowns. 
+4. Results Discussion
+Contrary to what was expected, neural networks performed the least, followed by the decision tree and the best results came from the random forests with 10 trees.
+As we increase the number of trees in the forest,  our prediction become more accurate. The poor results of the neural networks can be attributed to the high prevalence
+of less than 50k incomes even in the cleaned data i.e. dataset without unknowns.
 Probability for the label '>50K'  : 23.93% / 24.78% (without unknowns)
 Probability for the label '<=50K' : 76.07% / 75.22% (without unknowns)
 
-5.Please find attached our code or alternatively you can clone it from github https://github.com/FruitSenpai/ML-Assignment
+5. Code
+Please find attached our code or alternatively you can clone it from github https://github.com/FruitSenpai/ML-Assignment
+
+
