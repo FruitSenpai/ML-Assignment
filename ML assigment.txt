@@ -61,5 +61,30 @@ and why they were made
 
 RESULTS
 
+Due to reduced processing power, we had to scale down our dataset.
+For the decision tree: - 500 entries gave us a precision of 78.8%
+                       - 1000 entries gave us 79.497% of accurate hits
+                       - 1500 entries gave us 80% of accurate hits
+For the random forest, depending on the number of trees we had: - 500 entries with 1 tree: 76.97%
+                                                                - 500 entries with 5 trees: 77.374%
+                                                                - 500 entries with 10 trees: 83.838%
+                                                                - 1000 entries with 1 tree: 79.497%
+                                                                - 1000 entries with 5 trees: 82.513%
+                                                                - 1000 entries with 10 trees: 83.618%
+                                                                - 1500 entries with 1 tree:77.592%
+                                                                - 1500 entries with 5 trees:81.873%
+                                                                - 1500 entries with 10 trees: 81.16%
+We have to note that every tree of the forest has 8 features picked at random and their depth was limited to 10 
+
+For the Neural network: - 500 entries gives us a 76.2% precision
+                        - 1000 entries gives us a 75.6% precision
+                        - 1500 entries gives us a  74.73% precision
+
 4. RESULTS DISCUSSION
+Contrary to what was expected, neural networks performed the least, followed by the decision tree and the best results came from the random forests with 10 trees. 
+As we increse the number of trees in the forest,  our prediction become more accurate. The poor results of the neural networks can be attributed to the high prevalence 
+of less than 50k incomes even in the cleaned data i.e. dataset without unknowns. 
+Probability for the label '>50K'  : 23.93% / 24.78% (without unknowns)
+Probability for the label '<=50K' : 76.07% / 75.22% (without unknowns)
+
 5.Please find attached our code or alternatively you can clone it from github https://github.com/FruitSenpai/ML-Assignment
