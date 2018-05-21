@@ -291,7 +291,7 @@ class Network:
         return x * (1 - x)
 
     def train(self, training_data, training_outputs, num_iterations):
-        print("\tTraining...")
+        # print("\tTraining...")
         for counter in range(num_iterations):
             if(counter%100 == 0):
                 print("\tTrain Iteration: " + str(counter))
@@ -303,6 +303,10 @@ class Network:
 
             layer1_error = layer2_delta.dot(self.layer2.weights.T)
             layer1_delta = layer1_error * self.sigmoid_derivative(output_from_layer_1)
+
+            # if(counter<20):
+            #     print(np.sum(np.abs(layer1_error)))
+            #     print(np.sum(np.abs(layer2_error)))
 
             layer1_adjustment = training_data.T.dot(layer1_delta)
             layer2_adjustment = output_from_layer_1.T.dot(layer2_delta)
@@ -331,54 +335,64 @@ if __name__ == "__main__":
     x, y = load_dataset()
     #x = map(float, x)
     #y = map(float, y)
-    print("========Dataset Size==========")
-    print(x, len(x))
-    print(y)
-    print("==============================")
+    # print("========Dataset Size==========")
+    # print(x, len(x))
+    # print(y)
+    # print("==============================")
 
     _x_ = []
     _y_ = []
-    for i in range(15000):
+    for i in range(20000):
         _x_.append(x[i])
         _y_.append(y[i])
     _x_ = np.asarray(_x_)
     _y_ = np.asarray(_y_)
     _y_ = _y_[:,np.newaxis]
-    print(len(_x_[0]))
-
-    print("Creating Network...")
+    # print(len(_x_[0]))
+    #
+    # print("Creating Network...")
     # (x, y) => x neurons with y inputs each
     layer1 = Layer(8, 14)
     layer2 = Layer(1, 8)
 
     neural_network = Network(layer1, layer2)
-    print("Before: ")
+    # print("Before: ")
     neural_network.print_weights()
-    print("Training Network...")
+    # print("Training Network...")
     neural_network.train(_x_, _y_, 10000)
-    print("\nAfter: ")
+    # print("\nAfter: ")
     neural_network.print_weights()
 
-    print("Testing...")
+    # print("Testing...")
     correct, wrong = [0, 0], [0, 0]
-    under = 0
+    under, over = 0, 0
     last_index = len(x)-1
-    for i in range(5000):
-        hidden, out = neural_network.classify(x[last_index-i])
-        actual = y[last_index-i]
-        if actual == 0:
-            under +=1
-        _out = round(out[0])
-        if _out == actual: #correct classification
-            if _out == 1: # correct classification of >50k
-                correct[0] += 1
-            else: # correct classification of <=50k
-                correct[1] += 1
-        else: #wrong classification
-            if _out == 1: # wrong classification of >50k
-                wrong[0] += 1
-            else: # wrong classification of <=50k
-                wrong[1] += 1
 
-    print(correct, wrong)
-    print(under)
+    for j in range(1,4):
+        test_size = 500*j
+        print("============Test for {} inputs============".format(test_size))
+        for i in range(test_size):
+            hidden, out = neural_network.classify(x[last_index-i])
+            actual = y[last_index-i]
+            if actual == 0:
+                under +=1
+            else:
+                over += 1
+            _out = round(out[0])
+            if _out == actual: #correct classification
+                if _out == 1: # correct classification of >50k
+                    correct[0] += 1
+                else: # correct classification of <=50k
+                    correct[1] += 1
+            else: #wrong classification
+                if _out == 1: # wrong classification of >50k
+                    wrong[0] += 1
+                else: # wrong classification of <=50k
+                    wrong[1] += 1
+
+        print("<=50k: ", under)
+        print(" >50k: ", over)
+        print("\tCorrect\t| Wrong")
+        print("under|\t{} \t| {}".format(correct[0],wrong[0]))
+        print("over |\t{} \t| {}".format(correct[1],wrong[1]))
+        print()
