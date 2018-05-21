@@ -2,6 +2,7 @@
 # # ANN, by Seale
 import numpy as np
 from numpy import exp, array, random, dot
+#from bigfloat import *
 
 
 def workclass(text):
@@ -250,29 +251,35 @@ def load_dataset(data='../data/adult.data'):
     Loads and returns train and test datasets.
     """
     data = np.loadtxt(fname=data, delimiter=', ', dtype=str)
-    for i in data:
-        for j in range(len(i)) :
-            i[j] = numerize(i[j], j)
-
+    counter = 0
+    arr = [[0.0 for j in range(len(data[i]))] for i in range(len(data))]
+    for i in range(len(data)):
+        counter += 1
+        #print(i)
+        for j in range(len(data[i])) :
+            arr[i][j] = numerize(data[i][j], j)
+        #print(i)
+        #print("Process Person " + str(counter))
+    data = np.asarray(arr)
     y = data[:,data.shape[1]-1] #.astype(np.int)
     x = data[:,:data.shape[1]-1] #/ 255.0
     return (x, y)
 
-x, y = load_dataset()
-
-
 class Layer:
-    def __init__(self, num_notes, num_inputs):
-        self.weights = 2 * random.random((num_inputs, num_notes)) - 1
+    def __init__(self, num_notes, num_inputs_per_note):
+        self.nodes = num_notes
+        self.inputs = num_inputs_per_note
+        self.weights = 2 * random.random((num_inputs_per_note, num_notes)) - 1
 
     def print_weights(self):
         print(self.self.weights)
 
 
 class Network:
-    def __init__(self):
-        random.seed(1)
+    def __init__(self, layer1, layer2):
         self.layers = []
+        self.layer1 = layer1
+        self.layer2 = layer2
 
     def add_layer(self, layer):
         self.layers.append(layer)
@@ -283,13 +290,95 @@ class Network:
     def sigmoid_derivative(self, x):
         return x * (1 - x)
 
-    def train(self, training_data, num_iterations):
-        print("Training...")
+    def train(self, training_data, training_outputs, num_iterations):
+        print("\tTraining...")
         for counter in range(num_iterations):
-            outputs = classify(training_data)
+            if(counter%100 == 0):
+                print("\tTrain Iteration: " + str(counter))
+            output_from_layer_1, output_from_layer_2 = self.classify(training_data)
+
+            #print(training_outputs.shape," VS ", output_from_layer_2.shape)
+            layer2_error = training_outputs - output_from_layer_2
+            layer2_delta = layer2_error * self.sigmoid_derivative(output_from_layer_2)
+
+            layer1_error = layer2_delta.dot(self.layer2.weights.T)
+            layer1_delta = layer1_error * self.sigmoid_derivative(output_from_layer_1)
+
+            layer1_adjustment = training_data.T.dot(layer1_delta)
+            layer2_adjustment = output_from_layer_1.T.dot(layer2_delta)
+
+            # Adjust the weights.
+            self.layer1.weights += layer1_adjustment
+            self.layer2.weights += layer2_adjustment
 
     def classify(self, inputs):
-        result = []
-        output_1 = sigmoid( dot(inputs, self.synaptic_weights) )
+        output_from_layer1 = self.sigmoid( dot(inputs, self.layer1.weights) )
+        output_from_layer2 = self.sigmoid( dot(output_from_layer1, self.layer2.weights) )
 
-        return result
+        return output_from_layer1, output_from_layer2
+
+    def print_weights(self):
+        print("\t Layer 1 ({} neurons, each with {} inputs): ".format(self.layer1.nodes, self.layer1.inputs))
+        print(self.layer1.weights)
+        print()
+        print("\t Layer 2 ({} neuron, with {} inputs):".format(self.layer2.nodes, self.layer2.inputs))
+        print(self.layer2.weights)
+        print()
+
+if __name__ == "__main__":
+    random.seed(1)
+
+    x, y = load_dataset()
+    #x = map(float, x)
+    #y = map(float, y)
+    print("========Dataset Size==========")
+    print(x, len(x))
+    print(y)
+    print("==============================")
+
+    _x_ = []
+    _y_ = []
+    for i in range(15000):
+        _x_.append(x[i])
+        _y_.append(y[i])
+    _x_ = np.asarray(_x_)
+    _y_ = np.asarray(_y_)
+    _y_ = _y_[:,np.newaxis]
+    print(len(_x_[0]))
+
+    print("Creating Network...")
+    # (x, y) => x neurons with y inputs each
+    layer1 = Layer(8, 14)
+    layer2 = Layer(1, 8)
+
+    neural_network = Network(layer1, layer2)
+    print("Before: ")
+    neural_network.print_weights()
+    print("Training Network...")
+    neural_network.train(_x_, _y_, 10000)
+    print("\nAfter: ")
+    neural_network.print_weights()
+
+    print("Testing...")
+    correct, wrong = [0, 0], [0, 0]
+    under = 0
+    last_index = len(x)-1
+    for i in range(5000):
+        hidden, out = neural_network.classify(x[last_index-i])
+        actual = y[last_index-i]
+        if actual == 0:
+            under +=1
+        _out = round(out[0])
+        if _out == actual: #correct classification
+            if _out == 1: # correct classification of >50k
+                correct[0] += 1
+            else: # correct classification of <=50k
+                correct[1] += 1
+        else: #wrong classification
+            if _out == 1: # wrong classification of >50k
+                wrong[0] += 1
+            else: # wrong classification of <=50k
+                wrong[1] += 1
+
+    print(correct, wrong)
+    print(under)
